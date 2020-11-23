@@ -1,0 +1,11 @@
+version: "3"
+services: 
+  rest-mongo:
+    image: mongo
+    environment:
+        MONGO_INITDB_ROOT_USERNAME: jefao
+        MONGO_INITDB_ROOT_PASSWORD: jefao123
+    ports:
+      - 27017:27017
+    volumes: 
+      - ./dbdata:/data/db

@@ -14,7 +14,7 @@ import java.util.*
 //@Component
 class Bootstrap(private val personRepository: PersonRepository): CommandLineRunner {
     override fun run(vararg args: String?) {
-        personRepository.save(Person(null, "jefones", LocalTime.now().minute))
+        personRepository.save(Person(null, "automatico", LocalTime.now().minute))
                 .map(::println)
                 .subscribe()
     }

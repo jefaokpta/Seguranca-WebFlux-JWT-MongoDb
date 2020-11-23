@@ -15,6 +15,7 @@ data class Person(
         @field:NotEmpty(message = ":::: NOME VAZIO PORRA! ASSIM FICA DIFICIL.")
         val name: String,
         val age: Int,
+        val addresses: MutableList<Address> = mutableListOf(),
         val deleted: Boolean = false
 ) {
         constructor(person: Person) : this(

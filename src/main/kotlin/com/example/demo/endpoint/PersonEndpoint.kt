@@ -18,7 +18,7 @@ class PersonEndpoint(private val personRepository: PersonRepository) {
 
     @GetMapping
     fun getAll() = personRepository.findAll()
-            .filter { !it.deleted }
+            //.filter { !it.deleted }
 
     @GetMapping("/{id}")
     fun get(@PathVariable id: String) = personRepository.findById(id)
@@ -28,15 +28,13 @@ class PersonEndpoint(private val personRepository: PersonRepository) {
 
     @PutMapping
     fun update(@RequestBody @Valid person: Person) = personRepository.findById(person.id?:"")
-            .map { Person(person) }
-            .flatMap(personRepository::save)
             .switchIfEmpty(Mono.error { ResponseStatusException(HttpStatus.NOT_FOUND, "Pessoa nao encontrada") })
+            .map { personRepository.save(person).subscribe() }
             .then()
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: String) = personRepository.findById(id)
-            .map { Person(it.id, it.name, it.age, true)}
-            .flatMap(personRepository::save)
             .switchIfEmpty(Mono.error { ResponseStatusException(HttpStatus.NOT_FOUND, "Pessoa nao encontrada") })
+            .map { personRepository.delete(it).subscribe() }
             .then()
 }
