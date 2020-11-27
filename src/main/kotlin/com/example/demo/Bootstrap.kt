@@ -18,12 +18,12 @@ import java.util.*
 @Component
 class Bootstrap(private val userAppRepository: UserAppRepository): CommandLineRunner {
     override fun run(vararg args: String?) {
-        userAppRepository.findByUsername("user")
+        userAppRepository.findByUsername("admin")
                 .switchIfEmpty(userAppRepository.save(UserApp(
                         null,
-                        "user",
+                        "admin",
                         PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("jefao123"),
-                        "ROLE_USER"
+                        "ROLE_ADMIN"
                 )))
                 .map(::println)
                 .subscribe()

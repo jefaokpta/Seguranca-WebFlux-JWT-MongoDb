@@ -6,6 +6,6 @@ package com.example.demo.model
  */
 class Token(
         val token: String,
-        val type: String = "BEARER "
+        val type: String = "Bearer"
 ) {
 }

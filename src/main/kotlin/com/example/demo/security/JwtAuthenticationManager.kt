@@ -18,7 +18,10 @@ class JwtAuthenticationManager(private val jwtTokenService: JwtTokenService): Re
 
     override fun authenticate(autenticacao: Authentication): Mono<Authentication> {
         val token = autenticacao.credentials.toString()
-        return jwtTokenService.extractUsername(token)
-                .map { UsernamePasswordAuthenticationToken(it, null, mutableListOf(SimpleGrantedAuthority("USER"))) }
+        return  jwtTokenService.validateToken(token)
+                .map { Mono.just(it) }
+                .orElse(Mono.empty())
+                .map { UsernamePasswordAuthenticationToken(it.body.subject, null,
+                        mutableListOf(SimpleGrantedAuthority(it.body["role"].toString()))) }
     }
 }

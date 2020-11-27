@@ -2,6 +2,7 @@ package com.example.demo.security
 
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextImpl
 import org.springframework.security.web.server.context.ServerSecurityContextRepository
@@ -23,13 +24,13 @@ class JwtSecurityContextRepository(private val jwtAuthenticationManager: JwtAuth
 
     override fun load(exchange: ServerWebExchange): Mono<SecurityContext> {
 
-        val auth = Optional.ofNullable(exchange.request.headers.getFirst(HttpHeaders.AUTHORIZATION))
+        val token = Optional.ofNullable(exchange.request.headers.getFirst(HttpHeaders.AUTHORIZATION))
                 .filter{it.startsWith("Bearer ")}
                 .map { it.substring(7) }
 
-        if (auth.isPresent)
+        if (token.isPresent)
             return jwtAuthenticationManager
-                    .authenticate(UsernamePasswordAuthenticationToken(auth.get(), auth.get()))
+                    .authenticate(UsernamePasswordAuthenticationToken(null, token.get()))
                     .map(::SecurityContextImpl)
 
         return Mono.empty()

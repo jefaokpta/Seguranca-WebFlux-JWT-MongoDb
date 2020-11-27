@@ -21,14 +21,12 @@ import reactor.kotlin.core.publisher.cast
 @RestController
 @RequestMapping("/login")
 class LoginController(
-        private val userAppSecurityService: UserAppSecurityService,
         private val userAppRepository: UserAppRepository,
         private val jwtTokenService: JwtTokenService,
 ) {
 
     @PostMapping
     fun save(@RequestBody login: Login) = userAppRepository.findByUsername(login.username)
-            //.cast(UserApp::class.java)
             .map(jwtTokenService::generateToken)
             .map(::Token)
 }

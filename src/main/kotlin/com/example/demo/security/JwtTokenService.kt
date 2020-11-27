@@ -27,10 +27,6 @@ class JwtTokenService {
     private val key =
             "jefaokpta102030405060708090asdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdjefao123"
 
-    fun extractUsername(token: String) = validateToken(token)
-            .map { Mono.just(it.body.subject) }
-            .orElse(Mono.empty())
-
     fun validateToken(token: String) = Optional.ofNullable(
             try {
                 Jwts.parserBuilder()
@@ -38,17 +34,17 @@ class JwtTokenService {
                 .build()
                 .parseClaimsJws(token)
             }catch (exception: Exception){
-                println(exception.stackTrace)
                 println(":::: TOKEN INVALIDO! $token")
                 null
             }
     )
 
     fun generateToken(user: UserApp) = Jwts.builder()
+            .setClaims(mutableMapOf("role" to user.authorities.joinToString { it.authority }))
             .setIssuer("Seguranca WEBFLUX")
             .setSubject(user.username)
             .setIssuedAt(Date.from(Instant.now()))
-            .setExpiration(Date.from(Instant.now().plusSeconds(300L)))
+            .setExpiration(Date.from(Instant.now().plus(Period.ofDays(1))))
             .signWith(Keys.hmacShaKeyFor(this.key.toByteArray()))
             .compact()
 
