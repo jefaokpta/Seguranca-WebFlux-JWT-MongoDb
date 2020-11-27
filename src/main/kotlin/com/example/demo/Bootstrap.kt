@@ -18,7 +18,7 @@ import java.util.*
 @Component
 class Bootstrap(private val userAppRepository: UserAppRepository): CommandLineRunner {
     override fun run(vararg args: String?) {
-        userAppRepository.findByUsername("admin")
+        userAppRepository.findByUsername("user")
                 .switchIfEmpty(userAppRepository.save(UserApp(
                         null,
                         "user",

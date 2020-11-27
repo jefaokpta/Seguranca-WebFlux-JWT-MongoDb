@@ -1,11 +1,18 @@
 package com.example.demo.endpoint
 
 import com.example.demo.model.Login
+import com.example.demo.model.Token
+import com.example.demo.model.UserApp
+import com.example.demo.repository.UserAppRepository
+import com.example.demo.security.JwtTokenService
+import com.example.demo.security.UserAppSecurityService
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import reactor.core.publisher.Mono
+import org.springframework.web.server.ServerWebExchange
+import reactor.core.publisher.cast
+import reactor.kotlin.core.publisher.cast
 
 /**
  * @author Jefferson Alves Reis (jefaokpta) < jefaokpta@hotmail.com >
@@ -13,8 +20,15 @@ import reactor.core.publisher.Mono
  */
 @RestController
 @RequestMapping("/login")
-class LoginController {
+class LoginController(
+        private val userAppSecurityService: UserAppSecurityService,
+        private val userAppRepository: UserAppRepository,
+        private val jwtTokenService: JwtTokenService,
+) {
 
     @PostMapping
-    fun save(@RequestBody login: Login) = Mono.just(login)
+    fun save(@RequestBody login: Login) = userAppRepository.findByUsername(login.username)
+            //.cast(UserApp::class.java)
+            .map(jwtTokenService::generateToken)
+            .map(::Token)
 }

@@ -18,25 +18,28 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource
  */
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
-class SecurityConfig{
+class SecurityConfig(
+        private val jwtAuthenticationManager: JwtAuthenticationManager,
+        private val jwtSecurityContextRepository: JwtSecurityContextRepository,
+){
 
     @Bean
     fun securityWebFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
-        return http.cors().and().authorizeExchange()
+        return http.cors().and()
+                .authenticationManager(jwtAuthenticationManager)
+                .securityContextRepository(jwtSecurityContextRepository)
+                .authorizeExchange()
                 .pathMatchers(HttpMethod.POST, "/login").permitAll()
-                .pathMatchers(HttpMethod.GET, "/users/**").permitAll()
+//                .pathMatchers(HttpMethod.GET, "/users/**").permitAll()
 //                .pathMatchers( "/persons/**").hasRole("ADMIN")
                 .anyExchange().authenticated()
-                .and().httpBasic()
                 .and().csrf().disable()
                 .build()
-//                .and()
-//                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
     }
 
     @Bean
-    fun authenticationManager(userAppService: UserAppService): ReactiveAuthenticationManager{
-        return UserDetailsRepositoryReactiveAuthenticationManager(userAppService)
+    fun authenticationManager(userAppSecurityService: UserAppSecurityService): ReactiveAuthenticationManager{
+        return UserDetailsRepositoryReactiveAuthenticationManager(userAppSecurityService)
     }
 
     // CONFIGURACAO PARA FUNCIONAR O http.cors().and() ACIMA

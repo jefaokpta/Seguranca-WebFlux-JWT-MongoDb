@@ -11,7 +11,7 @@ import reactor.kotlin.core.publisher.toMono
  * Date: 2020-11-25
  */
 @Service
-class UserAppService(private val userAppRepository: UserAppRepository) : ReactiveUserDetailsService {
+class UserAppSecurityService(private val userAppRepository: UserAppRepository) : ReactiveUserDetailsService {
 
     override fun findByUsername(username: String) = userAppRepository.findByUsername(username)
             .cast(UserDetails::class.java)
